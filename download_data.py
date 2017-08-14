@@ -97,25 +97,26 @@ def get_options(config):
 
 
 def download(url):
-    #global certfile
-    #headers = {'Accept-Encoding': 'identity'}
-    #r = requests.get(url, headers=headers, stream=True, verify=certfile)
-    #size = r.headers['Content-length']
+    global certfile
+    headers = {'Accept-Encoding': 'identity'}
+    r = requests.get(url, headers=headers, stream=True, verify=certfile)
+    size = r.headers['Content-length']
     #if r.status_code == 200:
     #    with open('/dev/null', 'wb') as f:
     #        for chunk in r:
     #            f.write(chunk)
     #return(int(size))
 
-    size = 0
-    with Popen(["/usr/bin/wget", "--no-check-certificate", "-O", "/dev/null", "%s" % url], stdout=PIPE, stderr=STDOUT) as p:
-        while p.poll() is None:
-            row = p.stdout.readline().decode()
-            m = re.match(r"^Length: (\d+)", row)
-            if (m):
-                size = int(m.group(1))
+#    size = 0
+    #with Popen(["/usr/bin/wget", "--no-check-certificate", "-O", "/dev/null", "%s" % url], stdout=PIPE, stderr=STDOUT) as p:
+    p = Popen(["/usr/bin/wget", "-q", "--no-check-certificate", "-O", "/dev/null", "%s" % url])
+#        while p.poll() is None:
+#            row = p.stdout.readline().decode()
+#            m = re.match(r"^Length: (\d+)", row)
+#            if (m):
+#                size = int(m.group(1))
         
-    return(size)
+    return(int(size))
 
 
 def collect_result(result):
@@ -124,7 +125,7 @@ def collect_result(result):
     global totalsize
     counter += 1
     totalsize += result
-    if not ( counter % 10 ):
+    if not ( counter % 100 ):
         now = time.perf_counter()
         elapsed = now - download_start
         objs_per_sec = "%.0f" % (counter / elapsed)
