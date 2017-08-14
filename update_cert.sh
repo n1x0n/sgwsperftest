@@ -69,10 +69,11 @@ then
 	exit 1
 fi
 
+debug "Downloading certificate from ${NODE}:${PORT}."
 openssl s_client -showcerts -connect ${NODE}:${PORT} </dev/null > $TEMPDIR/dummy.pem
 if [[ $? = 0 ]]
 then
-	debug "Cert downloaded successfully."
+	debug "Certificate downloaded successfully, copying to ${FILE}."
 	cp $TEMPDIR/dummy.pem $FILE
 fi
 
