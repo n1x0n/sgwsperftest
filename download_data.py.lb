@@ -276,7 +276,7 @@ def main():
     # Upload the data.
     name = ("%s-%s-%s.csv" % (test_start, test_end, socket.gethostname()))
     s3.meta.client.upload_file('/tmp/histodata', config['perftest']['upload_bucket'], name, ExtraArgs={'ACL': 'public-read'})
-    s3.meta.client.upload_file('/root/report.html', config['perftest']['upload_bucket'], 'report.html', ExtraArgs={'ACL': 'public-read'})
+    s3.meta.client.upload_file('/root/report.html', config['perftest']['upload_bucket'], 'report.html', ExtraArgs={'ACL': 'public-read', 'ContentType': 'text/html'})
 
 
     quit()
