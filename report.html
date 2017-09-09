@@ -41,13 +41,13 @@
 
         var size = new google.visualization.Histogram(document.getElementById('size_div'));
         var size_view = new google.visualization.DataView(data);
-        size_view.setColumns([8,9]);
+        size_view.setColumns([7,9]);
         size.draw(size_view, options);
         }
       //google.charts.setOnLoadCallback(drawChart);
     </script>
     <script type="text/javascript">
-        var reportsUrl = "/";
+        var reportsUrl = ".";
         var files = [];
 
         function loadDataList() {
