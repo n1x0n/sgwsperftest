@@ -11,6 +11,7 @@ from StorageGRID Webscale.
 # Modules
 ############################################################
 import time
+import socket
 import sys
 import os
 from contextlib import closing
@@ -30,6 +31,7 @@ from subprocess import Popen, PIPE, STDOUT
 ############################################################
 timer_start = time.perf_counter()
 download_start = time.perf_counter()
+test_start = int(time.time())
 counter = 0
 totalsize = 0
 certfile = ""
@@ -100,29 +102,11 @@ def get_options(config):
 
 
 def download(url):
-    #global certfile
-    #headers = {'Accept-Encoding': 'identity'}
-    #r = requests.get(url, headers=headers, stream=True, verify=certfile)
-    #size = r.headers['Content-length']
-    #if r.status_code == 200:
-    #    with open('/dev/null', 'wb') as f:
-    #        for chunk in r:
-    #            f.write(chunk)
-    #return(int(size))
-
-#    size = 0
-    #with Popen(["/usr/bin/wget", "--no-check-certificate", "-O", "/dev/null", "%s" % url], stdout=PIPE, stderr=STDOUT) as p:
-    #p = Popen(["/usr/bin/wget", "-q", "--no-check-certificate", "-O", "/dev/null", "%s" % url])
-#        while p.poll() is None:
-#            row = p.stdout.readline().decode()
-#            m = re.match(r"^Length: (\d+)", row)
-#            if (m):
-#                size = int(m.group(1))
-
+    # This function downloads 1 url and returns performance data.
     retval = ""
-    with Popen(["/usr/bin/curl", "-s", "--insecure", "-w", "%{time_namelookup}:%{time_connect}:%{time_appconnect}:%{time_pretransfer}:%{time_redirect}:%{time_starttransfer}:%{time_total}:%{size_download}:%{speed_download}", "-o", "/dev/null", ("%s" % url)], stdout=PIPE) as p:
+    with Popen(["/usr/bin/curl", "-s", "--insecure", "-w", "%{time_namelookup};%{time_connect};%{time_appconnect};%{time_pretransfer};%{time_redirect};%{time_starttransfer};%{time_total};%{size_download};%{speed_download};%{url_effective}", "-o", "/dev/null", ("%s" % url)], stdout=PIPE) as p:
         retval = p.stdout.readline().decode()
-        
+
     return(retval)
 
 
@@ -132,7 +116,7 @@ def collect_result(result):
     global counter
     global totalsize
     global longesttime
-    data = result.split(":")
+    data = result.split(";")
     resultlist.append(data)
     size = int(data[7])
     if ( float(data[5]) > threshold ):
@@ -173,32 +157,14 @@ def main():
     s3 = session.resource(service_name='s3', endpoint_url=baseurl, verify=config['perftest']['certfile'])
     bucket = s3.Bucket(config['perftest']['bucketname'])
 
-    policy = {
-      "Statement":[
-            {
-                "Sid":"AddPerm",
-                "Effect":"Allow",
-                "Principal": "*",
-                "Action":["s3:ListBucket"],
-                "Resource":["urn:sgws:s3:::" + config['perftest']['bucketname']]
-            },
-        {
-          "Sid":"AddPerm",
-          "Effect":"Allow",
-          "Principal": "*",
-          "Action":["s3:GetObject"],
-          "Resource":["urn:sgws:s3:::" + config['perftest']['bucketname'] + "/*"]
-        }
-      ]
-    }
-    bucket.Policy().put(Policy=json.dumps(policy))
-
     print("Getting list of objects.")
     work = []
+    num_endpoints = len(config['perftest']['endpoints'].split(","))
     for thisfile in bucket.objects.all():
+        thisfile.Acl().put("public-read")
         thisurl = "%s://%s:%s" % (
             config['perftest']['protocol'],
-            config['perftest']['endpoints'].split(",")[(len(work) % 3)],
+            config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
             config['perftest']['port'],
     	)
         dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], thisfile.key)]
@@ -230,12 +196,33 @@ def main():
     megabytes_per_sec = "%.2f" % (totalsize / elapsed / 1024 / 1024)
     print("SUMMARY: %s files downloaded in %.1f secs. %s objects/s, %s MB/s" % (counter, elapsed, objs_per_sec, megabytes_per_sec))
 
+    test_end = int(time.time())
+
 
     f = open("/tmp/histodata", "w")
     global resultlist
+    f.write("time_namelookup,time_connect,time_appconnect,time_pretransfer,time_redirect,time_starttransfer,time_total,size_download,speed_download,url_effective")
     for data in resultlist:
-        f.write("%s\n" % data[5])
+        string = ",".join(data)
+        f.write("%s\n" % string)
     f.close
+
+
+    # Upload the bucket to S3 storage for parsing.
+    bucket = ""
+    try:
+        bucket = s3.create_bucket(Bucket=config['perftest']['upload_bucket'])
+    except:
+        bucket = s3.Bucket(config['perftest']['upload_bucket'])
+
+    bucket.wait_until_exists()
+    bucket.Acl().put(ACL='public-read')
+
+
+    # Upload the data.
+    name = ("%s-%s-%s.csv" % (test_start, test_end, socket.gethostname()))
+    s3.meta.client.upload_file('/tmp/histodata', config['perftest']['upload_bucket'], name, ExtraArgs={'ACL': 'public-read'})
+
 
     quit()
 
