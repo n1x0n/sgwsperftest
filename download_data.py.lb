@@ -165,8 +165,35 @@ def main():
     print("Getting list of objects.")
     work = []
     num_endpoints = len(config['perftest']['endpoints'].split(","))
+    working_policies = True
+    policy = {
+      "Statement":[
+            {
+                "Sid":"AddPerm",
+                "Effect":"Allow",
+                "Principal": "*",
+                "Action":["s3:ListBucket"],
+                "Resource":["urn:sgws:s3:::" + config['perftest']['bucketname']]
+            },
+        {
+          "Sid":"AddPerm",
+          "Effect":"Allow",
+          "Principal": "*",
+          "Action":["s3:GetObject"],
+          "Resource":["urn:sgws:s3:::" + config['perftest']['bucketname'] + "/*"]
+        }
+      ]
+    }
+
+    try: 
+        bucket.Policy().put(Policy=json.dumps(policy))
+    except:
+        working_policies = False
+
+
     for thisfile in bucket.objects.all():
-        thisfile.Acl().put(ACL="public-read")
+        if not working_policies:
+            thisfile.Acl().put(ACL="public-read")
         thisurl = "%s://%s:%s" % (
             config['perftest']['protocol'],
             config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
@@ -221,7 +248,29 @@ def main():
         bucket = s3.Bucket(config['perftest']['upload_bucket'])
 
     bucket.wait_until_exists()
-    bucket.Acl().put(ACL='public-read')
+    try:
+        bucket.Acl().put(ACL='public-read')
+    except:
+        policy = {
+          "Statement":[
+                {
+                    "Sid":"AddPerm",
+                    "Effect":"Allow",
+                    "Principal": "*",
+                    "Action":["s3:ListBucket"],
+                    "Resource":["urn:sgws:s3:::" + config['perftest']['upload_bucket']]
+                },
+            {
+              "Sid":"AddPerm",
+              "Effect":"Allow",
+              "Principal": "*",
+              "Action":["s3:GetObject"],
+              "Resource":["urn:sgws:s3:::" + config['perftest']['upload_bucket'] + "/*"]
+            }
+          ]
+        }
+        bucket.Policy().put(Policy=json.dumps(policy))
+
 
 
     # Upload the data.
