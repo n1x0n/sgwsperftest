@@ -154,14 +154,19 @@ def main():
     # We need to pass everything that boto3 needs into
     # each sub process.
     session = boto3.session.Session(aws_access_key_id=config['perftest']['access_key'], aws_secret_access_key=config['perftest']['secret_key'])
-    s3 = session.resource(service_name='s3', endpoint_url=baseurl, verify=config['perftest']['certfile'])
+    s3 = ""
+    if config['perftest']['protocol'] == "https":
+        s3 = session.resource(service_name='s3', endpoint_url=baseurl, verify=config['perftest']['certfile'])
+    else:
+        s3 = session.resource(service_name='s3', endpoint_url=baseurl)
+
     bucket = s3.Bucket(config['perftest']['bucketname'])
 
     print("Getting list of objects.")
     work = []
     num_endpoints = len(config['perftest']['endpoints'].split(","))
     for thisfile in bucket.objects.all():
-        thisfile.Acl().put("public-read")
+        thisfile.Acl().put(ACL="public-read")
         thisurl = "%s://%s:%s" % (
             config['perftest']['protocol'],
             config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
@@ -201,7 +206,7 @@ def main():
 
     f = open("/tmp/histodata", "w")
     global resultlist
-    f.write("time_namelookup,time_connect,time_appconnect,time_pretransfer,time_redirect,time_starttransfer,time_total,size_download,speed_download,url_effective")
+    f.write("time_namelookup,time_connect,time_appconnect,time_pretransfer,time_redirect,time_starttransfer,time_total,size_download,speed_download,url_effective\n")
     for data in resultlist:
         string = ",".join(data)
         f.write("%s\n" % string)
@@ -222,6 +227,7 @@ def main():
     # Upload the data.
     name = ("%s-%s-%s.csv" % (test_start, test_end, socket.gethostname()))
     s3.meta.client.upload_file('/tmp/histodata', config['perftest']['upload_bucket'], name, ExtraArgs={'ACL': 'public-read'})
+    s3.meta.client.upload_file('/root/report.html', config['perftest']['upload_bucket'], 'report.html', ExtraArgs={'ACL': 'public-read'})
 
 
     quit()
