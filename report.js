@@ -156,7 +156,7 @@ function processData() {
     }
 
     $('#teststart').text(runs[selected_run].tag);
-    $('#dataheader').show();
+    $('#results').show();
 
     d = moment.unix(runs[selected_run].laststart)
     $('#laststart').text(d.format('YYYY-MM-DD HH:mm:ss'));

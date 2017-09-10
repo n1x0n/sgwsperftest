@@ -104,10 +104,14 @@ def get_options(config):
 def download(url):
     # This function downloads 1 url and returns performance data.
     retval = ""
+    start = time.perf_counter()
+
     with Popen(["/usr/bin/curl", "-s", "--insecure", "-w", "%{time_namelookup};%{time_connect};%{time_appconnect};%{time_pretransfer};%{time_redirect};%{time_starttransfer};%{time_total};%{size_download};%{speed_download};%{url_effective}", "-o", "/dev/null", ("%s" % url)], stdout=PIPE) as p:
         retval = p.stdout.readline().decode()
 
-    return(retval)
+    end = time.perf_counter()
+
+    return("%s;%s;%s" % (retval, start, end))
 
 
 def collect_result(result):
@@ -252,8 +256,10 @@ def main():
 
     f = open("/tmp/histodata", "w")
     global resultlist
-    f.write("time_namelookup,time_connect,time_appconnect,time_pretransfer,time_redirect,time_starttransfer,time_total,size_download,speed_download,url_effective\n")
+    f.write("time_namelookup,time_connect,time_appconnect,time_pretransfer,time_redirect,time_starttransfer,time_total,size_download,speed_download,url_effective,start_time,end_time\n")
     for data in resultlist:
+        data[10] = str(float(data[10]) - download_start);
+        data[11] = str(float(data[11]) - download_start);
         string = ",".join(data)
         f.write("%s\n" % string)
     f.close
@@ -297,6 +303,7 @@ def main():
     s3.meta.client.upload_file('/tmp/histodata', config['perftest']['upload_bucket'], name, ExtraArgs={'ACL': 'public-read'})
     s3.meta.client.upload_file('/root/report.html', config['perftest']['upload_bucket'], 'report.html', ExtraArgs={'ACL': 'public-read', 'ContentType': 'text/html'})
     s3.meta.client.upload_file('/root/report.js', config['perftest']['upload_bucket'], 'report.js', ExtraArgs={'ACL': 'public-read', 'ContentType': 'text/javascript'})
+    s3.meta.client.upload_file('/root/report.css', config['perftest']['upload_bucket'], 'report.js', ExtraArgs={'ACL': 'public-read', 'ContentType': 'text/css'})
 
 
     quit()

@@ -1,27 +1,70 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="language" content="en" />
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sgwsperftest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cyborg/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+    <link rel="stylesheet" href="report.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.3/jquery.csv.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script src="report.js"></script>
-  </head>
-  <body>
-    <div id="dropdown">
-      <form id="runForm">
-            <select id="selectRun">
-                <option selected hidden>Select a test run:</option>
-            </select>
-        </form>
+</head>
+
+<body>
+    <div>
+        <nav class="navbar navbar-default navigation-clean">
+            <div class="container">
+                <div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Object Storage Performance Report</a>
+                    <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+                </div>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#">Select Test Run <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li role="presentation"><a href="#">First Item</a></li>
+                                <li role="presentation"><a href="#">Second Item</a></li>
+                                <li role="presentation"><a href="#">Third Item</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
-    <div id="dataheader" style="display:none">
-        <h1 id="testheader">Test Report</h1>
-        <p>Test started at <span id="teststart"></span>. Last worker started at <span id="laststart"></span> and the first worker finished at <span id="firstend"></span>. All workers where active for <span id="testtime"></span> seconds, downloading <span id="alldata"></span> MiB which equals <span id="speed"></span> MiB/s (<span id="gbps"></span> Gb/s.)</p>
+    <div class="projects-clean">
+        <div class="container" id="results" style="display: none">
+            <div class="intro">
+                <h2 class="text-center">Results for test run started at <span id="teststart">2017-09-10 16:22</span></h2>
+                <p class="text-center">Last worker to start was started at <span id="laststart">2017-09-10 16:38:23</span> and the first worker to finish stopped at <span id="firstend">2017-09-10 16:38:33</span>.</p>
+                <p class="text-center">All workers were active for <span id="testtime">10</span> seconds, downloading <span id="alldata">112</span> MiB which equals <span id="speed">11</span> MiB/s (<span id="gbps">0.088</span> Gb/s.) </p>
+            </div>
+            <div class="row projects">
+                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/desk.jpg">
+                    <h3 class="name">Time to first byte</h3>
+                    <p class="description">This histogram shows the latency distribution. We use the <span class="code">time_starttransfer</span> value from curl to track when the first byte is received. A large spread would indicate unpredictable latency.</p>
+                </div>
+                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/building.jpg">
+                    <h3 class="name">Download speed</h3>
+                    <p class="description">This histogram shows the download speed per object in B/s. A large spread would indicate unpredictable download times.</p>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/minibus.jpeg">
+                    <h3 class="name">Objects per second</h3>
+                    <p class="description">This chart shows the number of downloads completed each second. This graph should be fairly even throughout the test run, otherwise it could indicate that background processes are interfering with the performance.</p>
+                </div>
+                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/loft.jpg">
+                    <h3 class="name">Object Size</h3>
+                    <p class="description">This histogram shows the distribution of object sizes in bytes. This graph is just for reference to show what type of objects were actually test in this test run.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="latency_div" style="width: 900px; height: 500px;"></div>
-    <div id="speed_div" style="width: 900px; height: 500px;"></div>
-    <div id="size_div" style="width: 900px; height: 500px;"></div>
-  </body>
+</body>
+
 </html>
