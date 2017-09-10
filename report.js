@@ -68,7 +68,7 @@ function loadDataList() {
                    start = tags[0];
                    end   = tags[1];
                    var d = moment.unix(start)
-                   d = d.format('YYYY-MM-DD hh:mm:ss')
+                   d = d.format('YYYY-MM-DD HH:mm:ss')
 
                    if ( start <= last_end ) {
                        // This datafile started before the previous run ended.
@@ -159,10 +159,10 @@ function processData() {
     $('#dataheader').show();
 
     d = moment.unix(runs[selected_run].laststart)
-    $('#laststart').text(d.format('YYYY-MM-DD hh:mm:ss'));
+    $('#laststart').text(d.format('YYYY-MM-DD HH:mm:ss'));
 
     d = moment.unix(runs[selected_run].firstend)
-    $('#firstend').text(d.format('YYYY-MM-DD hh:mm:ss'));
+    $('#firstend').text(d.format('YYYY-MM-DD HH:mm:ss'));
 
     testtime = runs[selected_run].firstend - runs[selected_run].laststart;
     $('#testtime').text(testtime);
