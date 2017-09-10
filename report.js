@@ -31,7 +31,7 @@ function drawChart(data) {
 
     var objps = new google.visualization.Histogram(document.getElementById('objps_div'));
     var objps_view = new google.visualization.DataView(data);
-    objps_view.setColumns([11,9]);
+    objps_view.setColumns([13,9]);
     objps.draw(objps_view, options);
 
     // Speed
@@ -198,13 +198,20 @@ function processData() {
     }
 
     for (var i=0; i<runs[selected_run].files.length; i++) {
-        $('#datafiles').append('<li><a href="' + runs[selected_run].files[i] + '">1</a></li>');
+        $('#datafiles').append('<li><a href="' + runs[selected_run].files[i] + '">' + (i+1) + '</a></li>');
     }
     
     var realview = new google.visualization.DataView(data);
-    alert(realview.getNumberOfRows());
     realview.setRows(realview.getFilteredRows([{column: 10, minValue: runs[selected_run].laststart}, {column: 11, maxValue: runs[selected_run].firstend}]));
-    alert(realview.getNumberOfRows());
+    var filtered_data = realview.toDataTable();
+
+    filtered_data.addColumn('number', 'calcstart');
+    filtered_data.addColumn('number', 'calcend');
+    for (var i=0; i<filtered_data.getNumberOfRows(); i++) {
+        filtered_data.setValue(i,12,(filtered_data.getValue(i,10) - runs[selected_run].laststart));
+        filtered_data.setValue(i,13,(filtered_data.getValue(i,11) - runs[selected_run].laststart));
+    }
+    data = filtered_data;
 
     $('#teststart').text(runs[selected_run].tag);
     $('#results').show();
