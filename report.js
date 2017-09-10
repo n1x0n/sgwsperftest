@@ -78,7 +78,7 @@ function loadDataList() {
                    tags = files[i].split("-");
                    start = tags[0];
                    end   = tags[1];
-                   var d = moment.unix(start)
+                   var d = moment.unix(int(start))
                    d = d.format('YYYY-MM-DD HH:mm:ss')
 
                    if ( start <= last_end ) {
@@ -205,10 +205,10 @@ function processData() {
     $('#results').show();
     $('#datafiles').show();
 
-    d = moment.unix(runs[selected_run].laststart)
+    d = moment.unix(int(runs[selected_run].laststart))
     $('#laststart').text(d.format('YYYY-MM-DD HH:mm:ss'));
 
-    d = moment.unix(runs[selected_run].firstend)
+    d = moment.unix(int(runs[selected_run].firstend))
     $('#firstend').text(d.format('YYYY-MM-DD HH:mm:ss'));
 
     testtime = runs[selected_run].firstend - runs[selected_run].laststart;

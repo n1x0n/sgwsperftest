@@ -258,8 +258,8 @@ def main():
     global resultlist
     f.write("time_namelookup,time_connect,time_appconnect,time_pretransfer,time_redirect,time_starttransfer,time_total,size_download,speed_download,url_effective,start_time,end_time\n")
     for data in resultlist:
-        data[10] = str(float(data[10]) - download_start);
-        data[11] = str(float(data[11]) - download_start);
+        #data[10] = str(float(data[10]) - download_start);
+        #data[11] = str(float(data[11]) - download_start);
         string = ",".join(data)
         f.write("%s\n" % string)
     f.close
