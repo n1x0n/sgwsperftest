@@ -78,7 +78,7 @@ function loadDataList() {
                    tags = files[i].split("-");
                    start = tags[0];
                    end   = tags[1];
-                   var d = moment.unix(int(start))
+                   var d = moment.unix(parseFloat(start).toFixed(0))
                    d = d.format('YYYY-MM-DD HH:mm:ss')
 
                    if ( start <= last_end ) {
@@ -200,15 +200,20 @@ function processData() {
     for (var i=0; i<runs[selected_run].files.length; i++) {
         $('#datafiles').append('<li><a href="' + runs[selected_run].files[i] + '">1</a></li>');
     }
+    
+    var realview = new google.visualization.DataView(data);
+    alert(realview.getNumberOfRows());
+    realview.setRows(realview.getFilteredRows([{column: 10, minValue: runs[selected_run].laststart}, {column: 11, maxValue: runs[selected_run].firstend}]));
+    alert(realview.getNumberOfRows());
 
     $('#teststart').text(runs[selected_run].tag);
     $('#results').show();
     $('#datafiles').show();
 
-    d = moment.unix(int(runs[selected_run].laststart))
+    d = moment.unix(parseFloat(runs[selected_run].laststart).toFixed(0))
     $('#laststart').text(d.format('YYYY-MM-DD HH:mm:ss'));
 
-    d = moment.unix(int(runs[selected_run].firstend))
+    d = moment.unix(parseFloat(runs[selected_run].firstend).toFixed(0))
     $('#firstend').text(d.format('YYYY-MM-DD HH:mm:ss'));
 
     testtime = runs[selected_run].firstend - runs[selected_run].laststart;
