@@ -105,10 +105,12 @@ function loadDataList() {
 
                var select = document.getElementById("selectRun");
                for (var i=0; i<runs.length; i++) {
-                   var el = document.createElement("option");
+                   var menuItemNo = $dropdown.find("li").length;
+                   $dropdown.append('<li role="presentation"><a href="#">' + runs[i].tag + '</a></li>');
+                   /* var el = document.createElement("option");
                    el.textContent = runs[i].tag;
                    el.value = i;
-                   select.appendChild(el);
+                   select.appendChild(el); */
                }
 
                $('#selectRun').change(function() {
