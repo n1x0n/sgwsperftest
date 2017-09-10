@@ -224,7 +224,7 @@ function processData() {
     $('#firstend').text(d.format('YYYY-MM-DD HH:mm:ss'));
 
     testtime = runs[selected_run].firstend - runs[selected_run].laststart;
-    $('#testtime').text(testtime);
+    $('#testtime').text(parseFloat(testtime).toFixed(1));
 
     alldata = 0;
     for (i=0; i < data.getNumberOfRows(); i++)
