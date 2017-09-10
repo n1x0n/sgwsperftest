@@ -3,6 +3,8 @@ var data_to_load = 0;
 var tables = [];
 var reportsUrl = ".";
 var files = [];
+var runs = [];
+var selected_run = 0;
 
 
 
@@ -60,7 +62,6 @@ function loadDataList() {
                    });
                files.sort();
                last_end = 0;
-               runs = [];
                runcounter = -1;
                for (var i=0; i<files.length; i++) {
                    tags = files[i].split("-");
@@ -79,6 +80,12 @@ function loadDataList() {
                        if ( end > this_run.end ){
                            this_run.end = end;
                        }
+                       if ( end < this_run.firstend ){
+                           this_run.firstend = end;
+                       }
+                       if ( start > this_run.laststart ){
+                           this_run.laststart = start;
+                       }
                        this_run.files.push(files[i]);
                    } else {
                        // This is a new run.
@@ -86,6 +93,8 @@ function loadDataList() {
                            tag:d,
                            start:start,
                            end:end,
+                           laststart:start,
+                           firstend:end,
                            files:[files[i]]
                        };
                        runcounter += 1;
@@ -105,6 +114,7 @@ function loadDataList() {
                $('#selectRun').change(function() {
                    // Load the data for this run.
                    this_run = runs[$(this).val()];
+                   selected_run = $(this).val();
                    data_to_load = this_run.files.length;
                    tables = [];
                    for (var i=0; i<this_run.files.length; i++) {
@@ -115,7 +125,7 @@ function loadDataList() {
                            data_loaded += 1;
                        }, dataType='text');
                    }
-                    
+
                    processData();
                });
            },
@@ -144,6 +154,31 @@ function processData() {
             data = new google.visualization.DataTable(json1);
         }
     }
+
+    $('#teststart').text(runs[selected_run].tag);
+    $('#dataheader').show();
+
+    laststart = new Date(0);
+    laststart.setUTCSeconds(runs[selected_run].laststart);
+    $('#laststart').text(laststart);
+
+    firstend = new Date(0);
+    firstend.setUTCSeconds(runs[selected_run].firstend);
+    $('#firstend').text(firstend);
+
+    testtime = runs[selected_run].firstend - runs[selected_run].laststart;
+    $('#testtime').text(testtime);
+
+    alldata = 0;
+    for (i=0; i < data.getNumberOfRows(); i++)
+        alldata = alldata + data.getValue(i,7);
+    $('#alldata').text((alldata/1024/1024).toFixed());
+
+    speed = alldata / testtime;
+    $('#speed').text((speed/1024/1024).toFixed());
+
+    gbps = alldata / testtime;
+    $('#gbps').text(((speed*8)/1024/1024/1024).toFixed(3));
 
     data_loaded = 0;
     drawChart(data);
