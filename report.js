@@ -107,13 +107,32 @@ function loadDataList() {
                for (var i=0; i<runs.length; i++) {
                    var menuItemNo = $select.find("li").length;
                    $select.append('<li role="presentation"><a href="#">' + runs[i].tag + '</a></li>');
+                   $select.find("li")[menuItemNo].click(changeReport(menuItemNo));
                    /* var el = document.createElement("option");
                    el.textContent = runs[i].tag;
                    el.value = i;
                    select.appendChild(el); */
                }
 
-               $('#selectRun').change(function() {
+               function changeReport(selection) {
+                   // Load the data for this run.
+                   this_run = runs[selection];
+                   selected_run = selection;
+                   data_to_load = this_run.files.length;
+                   tables = [];
+                   for (var i=0; i<this_run.files.length; i++) {
+                       $.get(this_run.files[i], function(csvString) {
+                           var arrayData = $.csv.toArrays(csvString, {onParseValue: $.csv.hooks.castToScalar});
+                           var data = new google.visualization.arrayToDataTable(arrayData);
+                           tables.push(data);
+                           data_loaded += 1;
+                       }, dataType='text');
+                   }
+
+                   processData();
+               });
+
+               /*$('#selectRun').change(function() {
                    // Load the data for this run.
                    this_run = runs[$(this).val()];
                    selected_run = $(this).val();
@@ -129,7 +148,7 @@ function loadDataList() {
                    }
 
                    processData();
-               });
+               });*/
            },
            error: function(data) {
                console.log('Error loading XML data');
