@@ -217,7 +217,6 @@ def main():
                 config['perftest']['port'],
             )
             dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], line)]
-            print("->%s<-" % dummy)
             work.append(dummy)
 
     filelist.close
