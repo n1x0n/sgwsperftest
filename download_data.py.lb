@@ -208,17 +208,19 @@ def main():
     #     work.append(dummy)
 
 
-    f = open(config['perftest']['filelist'], "r")
-    for line in f:
-        line.strip()
-        thisurl = "%s://%s:%s" % (
-            config['perftest']['protocol'],
-            config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
-            config['perftest']['port'],
-        )
-        dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], line)]
-        work.append(dummy)
-    f.close
+    with open(config['perftest']['filelist'], "r") as filelist:
+        for line in filelist:
+            line = line.rstrip()
+            thisurl = "%s://%s:%s" % (
+                config['perftest']['protocol'],
+                config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
+                config['perftest']['port'],
+            )
+            dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], line)]
+            print("->%s<-" % dummy)
+            work.append(dummy)
+
+    filelist.close
 
     print("Found %s objects." % len(work))
     print("Shuffling list to randomize download pattern.")
