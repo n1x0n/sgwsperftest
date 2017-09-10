@@ -107,7 +107,7 @@ function loadDataList() {
                for (var i=0; i<runs.length; i++) {
                    var menuItemNo = $select.find("li").length;
                    $select.append('<li role="presentation"><a href="#">' + runs[i].tag + '</a></li>');
-                   $select.find("li")[menuItemNo].click(changeReport(menuItemNo));
+                   $select.find("li")[menuItemNo].on('click', changeReport(menuItemNo));
                    /* var el = document.createElement("option");
                    el.textContent = runs[i].tag;
                    el.value = i;
