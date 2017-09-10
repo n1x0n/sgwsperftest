@@ -106,7 +106,7 @@ function loadDataList() {
                var $select = $("#selectRun");
                for (var i=0; i<runs.length; i++) {
                    var menuItemNo = $select.find("li").length;
-                   $dropdown.append('<li role="presentation"><a href="#">' + runs[i].tag + '</a></li>');
+                   $select.append('<li role="presentation"><a href="#">' + runs[i].tag + '</a></li>');
                    /* var el = document.createElement("option");
                    el.textContent = runs[i].tag;
                    el.value = i;
