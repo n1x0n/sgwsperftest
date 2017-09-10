@@ -1,6 +1,8 @@
 # n1x0n/sgwsperftest
 Docker image that I use for performance tests against NetApp StorageGRID Webscale.
 
+2017-09-10: This readme is outdated. Since I wrote this I have added load balancing, raw data and html reports stored in Object Storage, I no longer load the full list of objects on each run and added more options to `config.ini`. I will update the readme, but until then I suggest you look at `upload_data.py.lb` to see how the benchmark works now.
+
 # Usage
 You might need to modify the code to suit your environment, but I think I managed to move most of those specifics to config.ini. (Open an Issue if I missed something.)
 
