@@ -29,9 +29,9 @@ from subprocess import Popen, PIPE, STDOUT
 ############################################################
 # Global Variables
 ############################################################
-timer_start = time.perf_counter()
-download_start = time.perf_counter()
-test_start = int(time.time())
+timer_start = time.time()
+download_start = time.time()
+test_start = time.time()
 counter = 0
 totalsize = 0
 certfile = ""
@@ -61,7 +61,7 @@ def debug(message):
             DEBUG=True
     if not DEBUG:
         return
-    now = time.perf_counter()
+    now = time.time()
     elapsed = now - timer_start
     eprint("[%f] %s" % (elapsed, message))
     return
@@ -69,7 +69,7 @@ def debug(message):
 
 def abort(message="Unknown error"):
     """Aborts with message."""
-    now = time.perf_counter()
+    now = time.time()
     elapsed = now - timer_start
     eprint("[%f] ABORT: %s" % (elapsed, message))
     quit(1)
@@ -104,12 +104,12 @@ def get_options(config):
 def download(url):
     # This function downloads 1 url and returns performance data.
     retval = ""
-    start = time.perf_counter()
+    start = time.time()
 
     with Popen(["/usr/bin/curl", "-s", "--insecure", "-w", "%{time_namelookup};%{time_connect};%{time_appconnect};%{time_pretransfer};%{time_redirect};%{time_starttransfer};%{time_total};%{size_download};%{speed_download};%{url_effective}", "-o", "/dev/null", ("%s" % url)], stdout=PIPE) as p:
         retval = p.stdout.readline().decode()
 
-    end = time.perf_counter()
+    end = time.time()
 
     return("%s;%s;%s" % (retval, start, end))
 
@@ -128,7 +128,7 @@ def collect_result(result):
     counter += 1
     totalsize += size
     if not ( counter % 100 ):
-        now = time.perf_counter()
+        now = time.time()
         elapsed = now - download_start
         objs_per_sec = "%.0f" % (counter / elapsed)
         megabytes_per_sec = "%.2f" % (totalsize / elapsed / 1024 / 1024)
@@ -236,7 +236,7 @@ def main():
 
     pool = mp.Pool(processes=workers)
     global download_start
-    download_start = time.perf_counter()
+    download_start = time.time()
     for key in work:
         pool.apply_async(download, key, callback=collect_result)
     pool.close()
@@ -245,13 +245,13 @@ def main():
     global counter
     global totalsize
 
-    now = time.perf_counter()
+    now = time.time()
     elapsed = now - download_start
     objs_per_sec = "%.0f" % (counter / elapsed)
     megabytes_per_sec = "%.2f" % (totalsize / elapsed / 1024 / 1024)
     print("SUMMARY: %s files downloaded in %.1f secs. %s objects/s, %s MB/s" % (counter, elapsed, objs_per_sec, megabytes_per_sec))
 
-    test_end = int(time.time())
+    test_end = time.time()
 
 
     f = open("/tmp/histodata", "w")
