@@ -154,7 +154,7 @@ function changeReport(selection) {
         }, dataType='text');
     }
 
-    ProcessData();
+    processData();
 }
 
 
