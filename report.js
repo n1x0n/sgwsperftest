@@ -103,7 +103,7 @@ function loadDataList() {
                    }
                }
 
-               var $select = document.getElementById("selectRun");
+               var $select = $("#selectRun");
                for (var i=0; i<runs.length; i++) {
                    var menuItemNo = $select.find("li").length;
                    $dropdown.append('<li role="presentation"><a href="#">' + runs[i].tag + '</a></li>');
