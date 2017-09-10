@@ -170,6 +170,10 @@ function changeReport(selection) {
         }, dataType='text');
     }
 
+
+    $('#datafiles').hide();
+    $('#datafiles').find('li').slice(1).remove();
+
     processData();
 }
 
@@ -193,8 +197,13 @@ function processData() {
         }
     }
 
+    for (var i=0; i<runs[selected_run].files.length; i++) {
+        $('#datafiles').append('<li><a href="' + runs[selected_run].files[i] + '">1</a></li>');
+    }
+
     $('#teststart').text(runs[selected_run].tag);
     $('#results').show();
+    $('#datafiles').show();
 
     d = moment.unix(runs[selected_run].laststart)
     $('#laststart').text(d.format('YYYY-MM-DD HH:mm:ss'));
