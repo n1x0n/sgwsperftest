@@ -114,24 +114,6 @@ function loadDataList() {
                    select.appendChild(el); */
                }
 
-               function changeReport(selection) {
-                   // Load the data for this run.
-                   this_run = runs[selection];
-                   selected_run = selection;
-                   data_to_load = this_run.files.length;
-                   tables = [];
-                   for (var i=0; i<this_run.files.length; i++) {
-                       $.get(this_run.files[i], function(csvString) {
-                           var arrayData = $.csv.toArrays(csvString, {onParseValue: $.csv.hooks.castToScalar});
-                           var data = new google.visualization.arrayToDataTable(arrayData);
-                           tables.push(data);
-                           data_loaded += 1;
-                       }, dataType='text');
-                   }
-
-                   processData();
-               });
-
                /*$('#selectRun').change(function() {
                    // Load the data for this run.
                    this_run = runs[$(this).val()];
@@ -154,6 +136,25 @@ function loadDataList() {
                console.log('Error loading XML data');
            }
     });
+}
+
+
+function changeReport(selection) {
+    // Load the data for this run.
+    this_run = runs[selection];
+    selected_run = selection;
+    data_to_load = this_run.files.length;
+    tables = [];
+    for (var i=0; i<this_run.files.length; i++) {
+        $.get(this_run.files[i], function(csvString) {
+            var arrayData = $.csv.toArrays(csvString, {onParseValue: $.csv.hooks.castToScalar});
+            var data = new google.visualization.arrayToDataTable(arrayData);
+            tables.push(data);
+            data_loaded += 1;
+        }, dataType='text');
+    }
+
+    ProcessData();
 }
 
 
