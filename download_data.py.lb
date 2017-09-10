@@ -163,8 +163,6 @@ def main():
     bucket = s3.Bucket(config['perftest']['bucketname'])
 
     print("Getting list of objects.")
-    work = []
-    num_endpoints = len(config['perftest']['endpoints'].split(","))
     working_policies = True
     policy = {
       "Statement":[
@@ -191,16 +189,36 @@ def main():
         working_policies = False
 
 
-    for thisfile in bucket.objects.all():
-        if not working_policies:
-            thisfile.Acl().put(ACL="public-read")
+    work = []
+    num_endpoints = len(config['perftest']['endpoints'].split(","))
+
+    # The previous version of this script downloaded a list of keys
+    # from the bucket. This was time consuming so instead we reuse
+    # a text file listing all the keys. I keep the old code here for
+    # reference.
+    # for thisfile in bucket.objects.all():
+    #     if not working_policies:
+    #         thisfile.Acl().put(ACL="public-read")
+    #     thisurl = "%s://%s:%s" % (
+    #         config['perftest']['protocol'],
+    #         config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
+    #         config['perftest']['port'],
+    #     )
+    #     dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], thisfile.key)]
+    #     work.append(dummy)
+
+
+    f = open(config['perftest']['filelist'], "r")
+    for line in f:
+        line.strip()
         thisurl = "%s://%s:%s" % (
             config['perftest']['protocol'],
             config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
             config['perftest']['port'],
-    	)
-        dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], thisfile.key)]
+        )
+        dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], line)]
         work.append(dummy)
+    f.close
 
     print("Found %s objects." % len(work))
     print("Shuffling list to randomize download pattern.")
