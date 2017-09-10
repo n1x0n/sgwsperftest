@@ -141,6 +141,7 @@ function loadDataList() {
 
 function changeReport(selection) {
     // Load the data for this run.
+    alert(selection);
     this_run = runs[selection];
     selected_run = selection;
     data_to_load = this_run.files.length;
