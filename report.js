@@ -23,6 +23,17 @@ function drawChart(data) {
     latency_view.setColumns([5,9]);
     latency.draw(latency_view, options);
 
+    // Objects per second
+    var options = {
+        title: 'Objects per second',
+        legend: { position: 'none' },
+    };
+
+    var objps = new google.visualization.Histogram(document.getElementById('objps_div'));
+    var objps_view = new google.visualization.DataView(data);
+    objps_view.setColumns([11,9]);
+    objps.draw(objps_view, options);
+
     // Speed
     var options = {
         title: 'Download speed (B/s)',
@@ -105,14 +116,19 @@ function loadDataList() {
 
                var $select = $("#selectRun");
                for (var i=0; i<runs.length; i++) {
-                   var menuItemNo = $select.find("li").length;
-                   $select.append('<li role="presentation"><a href="#">' + runs[i].tag + '</a></li>');
-                   $select.find("li")[menuItemNo].on('click', changeReport(menuItemNo));
+                   $select.append('<li role="presentation"><a href="javascript:changeReport(' + i + ')">' + runs[i].tag + '</a></li>');
                    /* var el = document.createElement("option");
                    el.textContent = runs[i].tag;
                    el.value = i;
                    select.appendChild(el); */
                }
+
+               /*
+               $(".run").each(function() {
+                   run = $(this).attr('id').replace("run","");
+                   $(this).on('click',changeReport(run));
+               });
+               */
 
                /*$('#selectRun').change(function() {
                    // Load the data for this run.
@@ -141,7 +157,6 @@ function loadDataList() {
 
 function changeReport(selection) {
     // Load the data for this run.
-    alert(selection);
     this_run = runs[selection];
     selected_run = selection;
     data_to_load = this_run.files.length;

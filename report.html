@@ -37,25 +37,29 @@
     <div class="projects-clean">
         <div class="container" id="results" style="display: none">
             <div class="intro">
-                <h2 class="text-center">Results for test run started at <span id="teststart">2017-09-10 16:22</span></h2>
-                <p class="text-center">Last worker to start was started at <span id="laststart">2017-09-10 16:38:23</span> and the first worker to finish stopped at <span id="firstend">2017-09-10 16:38:33</span>.</p>
-                <p class="text-center">All workers were active for <span id="testtime">10</span> seconds, downloading <span id="alldata">112</span> MiB which equals <span id="speed">11</span> MiB/s (<span id="gbps">0.088</span> Gb/s.) </p>
+                <h2 class="text-center">Results for test run started at <span id="teststart"></span></h2>
+                <p class="text-center">Last worker to start was started at <span id="laststart"></span> and the first worker to finish stopped at <span id="firstend"></span>.</p>
+                <p class="text-center">All workers were active for <span id="testtime"></span> seconds, downloading <span id="alldata"></span> MiB which equals <span id="speed"></span> MiB/s (<span id="gbps"></span> Gb/s.) </p>
             </div>
             <div class="row projects">
-                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/desk.jpg">
+                <div class="col-lg-6 col-sm-6 item">
+                    <div id="latency_div" style="height: 30em;"></div>
                     <h3 class="name">Time to first byte</h3>
                     <p class="description">This histogram shows the latency distribution. We use the <span class="code">time_starttransfer</span> value from curl to track when the first byte is received. A large spread would indicate unpredictable latency.</p>
                 </div>
-                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/building.jpg">
+                <div class="col-lg-6 col-sm-6 item">
+                    <div id="speed_div" style="height: 30em;"></div>
                     <h3 class="name">Download speed</h3>
                     <p class="description">This histogram shows the download speed per object in B/s. A large spread would indicate unpredictable download times.</p>
                 </div>
                 <div class="clearfix"></div>
-                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/minibus.jpeg">
+                <div class="col-lg-6 col-sm-6 item">
+                    <div id="objps_div" style="height: 30em"></div>
                     <h3 class="name">Objects per second</h3>
                     <p class="description">This chart shows the number of downloads completed each second. This graph should be fairly even throughout the test run, otherwise it could indicate that background processes are interfering with the performance.</p>
                 </div>
-                <div class="col-lg-6 col-sm-6 item"><img class="img-responsive" src="assets/img/loft.jpg">
+                <div class="col-lg-6 col-sm-6 item">
+                    <div id="size_div" style="height: 30em"></div>
                     <h3 class="name">Object Size</h3>
                     <p class="description">This histogram shows the distribution of object sizes in bytes. This graph is just for reference to show what type of objects were actually test in this test run.</p>
                 </div>
