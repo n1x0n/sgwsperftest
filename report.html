@@ -8,13 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cyborg/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-loadingModal@1.0.2/css/jquery.loadingModal.css">
     <link rel="stylesheet" href="report.css">
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.3/jquery.csv.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script src="report.js"></script>
 </head>
 
 <body>
@@ -39,8 +34,8 @@
         <div class="container" id="results" style="display: none">
             <div class="intro">
                 <h2 class="text-center">Results for test run started at <span id="teststart"></span></h2>
-                <p class="text-center">Last worker to start was started at <span id="laststart"></span> and the first worker to finish stopped at <span id="firstend"></span>.</p>
-                <p class="text-center">All workers were active during <span id="testtime"></span> seconds, downloading <span id="alldata"></span> MiB which equals <span id="speed"></span> MiB/s (<span id="gbps"></span> Gb/s.) </p>
+                <p class="text-center">Last worker to start was started at <span id="laststart"></span> and the first worker to finish stopped at <span id="firstend"></span>.</p><br />
+                <p class="text-center">All workers were active during <span id="testtime"></span> seconds, downloading <span id="numobjs"></span> objects and <span id="alldata"></span> MiB which equals <span id="objectsps"></span> objects/s and <span id="speed"></span> MiB/s (<span id="gbps"></span> Gb/s.) </p>
             </div>
             <div class="row projects">
                 <div class="col-lg-6 col-sm-6 item">
@@ -79,5 +74,13 @@
         </footer>
     </div>
 </body>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.3/jquery.csv.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-loadingModal@1.0.2/js/jquery.loadingModal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+<script src="report.js"></script>
 
 </html>

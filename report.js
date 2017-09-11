@@ -157,6 +157,9 @@ function loadDataList() {
 
 function changeReport(selection) {
     // Load the data for this run.
+    $('body').loadingModal({
+	  text: 'Loading data...'
+    });
     this_run = runs[selection];
     selected_run = selection;
     data_to_load = this_run.files.length;
@@ -226,6 +229,11 @@ function processData() {
     testtime = runs[selected_run].firstend - runs[selected_run].laststart;
     $('#testtime').text(parseFloat(testtime).toFixed(1));
 
+    $('#numobjs').text(data.getNumberOfRows());
+
+    objectsps = (data.getNumberOfRows() / testtime).toFixed(1);
+    $('#objectsps').text(objectsps);
+
     alldata = 0;
     for (i=0; i < data.getNumberOfRows(); i++)
         alldata = alldata + data.getValue(i,7);
@@ -239,6 +247,8 @@ function processData() {
 
     data_loaded = 0;
     drawChart(data);
+    $('body').loadingModal('hide');
+    $('body').loadingModal('destroy');
 }
 
 $( document ).ready( loadDataList() );
