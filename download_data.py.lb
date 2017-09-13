@@ -195,42 +195,31 @@ def main():
 
     work = []
     num_endpoints = len(config['perftest']['endpoints'].split(","))
+    keylistsize = os.stat(config['perftest']['filelist']).st_size
+    numobjs =  int(config['perftest']['number_of_objects']) 
 
-    # The previous version of this script downloaded a list of keys
-    # from the bucket. This was time consuming so instead we reuse
-    # a text file listing all the keys. I keep the old code here for
-    # reference.
-    # for thisfile in bucket.objects.all():
-    #     if not working_policies:
-    #         thisfile.Acl().put(ACL="public-read")
-    #     thisurl = "%s://%s:%s" % (
-    #         config['perftest']['protocol'],
-    #         config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
-    #         config['perftest']['port'],
-    #     )
-    #     dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], thisfile.key)]
-    #     work.append(dummy)
+    while len(work) < numobjs:
+        offset = random.randrange(keylistsize)
+        f = open(config['perftest']['filelist'])
+        f.seek(offset)
+        f.readline()
+        line = f.readline()
+        if len(line) == 0:
+            f.seek(0)
+            line = f.readline()
+        f.close
 
+        line = line.rstrip()
+        thisurl = "%s://%s:%s" % (
+            config['perftest']['protocol'],
+            config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
+            config['perftest']['port'],
+        )
+        dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], line)]
+        work.append(dummy)
 
-    with open(config['perftest']['filelist'], "r") as filelist:
-        for line in filelist:
-            line = line.rstrip()
-            thisurl = "%s://%s:%s" % (
-                config['perftest']['protocol'],
-                config['perftest']['endpoints'].split(",")[(len(work) % num_endpoints)],
-                config['perftest']['port'],
-            )
-            dummy = ["%s/%s/%s" % (thisurl, config['perftest']['bucketname'], line)]
-            work.append(dummy)
-
-    filelist.close
 
     print("Found %s objects." % len(work))
-    print("Shuffling list to randomize download pattern.")
-    random.shuffle(work)
-
-    numobjs =  int(config['perftest']['number_of_objects']) 
-    work = work[0:numobjs]
     print("Downloading %s objects." % len(work))
     print("Starting download.")
 
@@ -242,6 +231,8 @@ def main():
     pool.close()
     pool.join()
 
+    test_end = time.time()
+
     global counter
     global totalsize
 
@@ -251,7 +242,6 @@ def main():
     megabytes_per_sec = "%.2f" % (totalsize / elapsed / 1024 / 1024)
     print("SUMMARY: %s files downloaded in %.1f secs. %s objects/s, %s MB/s" % (counter, elapsed, objs_per_sec, megabytes_per_sec))
 
-    test_end = time.time()
 
 
     f = open("/tmp/histodata", "w")
